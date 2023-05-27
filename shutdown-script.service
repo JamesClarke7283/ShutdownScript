@@ -2,7 +2,7 @@
 Description=A script where if you type 'p' for a specified number of time, it shuts off the computer
 
 [Service]
-
+Environment="DISPLAY=:0"
 WorkingDirectory=/opt/ShutdownScript
 ExecStart=/bin/python3 shutdown.py
 Restart=always
