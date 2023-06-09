@@ -1,9 +1,10 @@
 import time
 import subprocess
 from pynput import keyboard
+import threading
 
 # Define the key and the duration for power down
-key = keyboard.KeyCode.from_char('p')
+power_down_key = keyboard.KeyCode.from_char('p')
 power_down_duration = 2.5  # in seconds
 
 # Variable to keep track of key press
@@ -14,23 +15,29 @@ start_time = 0
 def on_press(key):
     global key_pressed
     global start_time
-    if key == key:
+    if key == power_down_key:
         if not key_pressed:
             key_pressed = True
             start_time = time.time()
-            while key_pressed:  # While the key is being pressed
-                elapsed_time = time.time() - start_time
-                if elapsed_time >= power_down_duration:
-                    print("Powering down...")
-                    subprocess.call(['sudo', 'shutdown', '-P', 'now'])
-                time.sleep(0.1)  # This delay can be adjusted as per your need
+            threading.Thread(target=check_duration).start()
 
 
 def on_release(key):
     global key_pressed
-    if key == key:
+    if key == power_down_key:
         key_pressed = False
         print("Key released before the specified duration.")
+
+
+def check_duration():
+    global start_time
+    global key_pressed
+    while key_pressed:  # While the key is being pressed
+        elapsed_time = time.time() - start_time
+        if elapsed_time >= power_down_duration:
+            print("Powering down...")
+            subprocess.call(['sudo', 'shutdown', '-P', 'now'])
+        time.sleep(0.1)  # This delay can be adjusted as per your need
 
 
 # Create a listener for key press and release events
