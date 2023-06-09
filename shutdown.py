@@ -26,7 +26,6 @@ def on_release(key):
     global key_pressed
     if key == power_down_key:
         key_pressed = False
-        print("Key released before the specified duration.")
 
 
 def check_duration():
@@ -38,6 +37,12 @@ def check_duration():
             print("Powering down...")
             subprocess.call(['sudo', 'shutdown', '-P', 'now'])
         time.sleep(0.1)  # This delay can be adjusted as per your need
+
+    # This part will be executed if the key is released, to check if it was pressed long enough
+    elapsed_time = time.time() - start_time
+    if elapsed_time >= power_down_duration:
+        print("Powering down...")
+        subprocess.call(['sudo', 'shutdown', '-P', 'now'])
 
 
 # Create a listener for key press and release events
